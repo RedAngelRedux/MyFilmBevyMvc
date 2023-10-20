@@ -19,6 +19,6 @@ namespace MyFilmBevy.Data
 
         public DbSet<Collection> Collection { get; set; }
 
-        public DbSet<MovieCollection> MoviesCollection { get; set; }
+        public DbSet<MovieCollection> MovieCollection { get; set; }
     }
 }
