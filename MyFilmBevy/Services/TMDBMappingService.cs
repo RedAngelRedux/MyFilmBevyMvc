@@ -4,6 +4,8 @@ using MyFilmBevy.Models.Database;
 using MyFilmBevy.Models.Settings;
 using MyFilmBevy.Models.TMDB;
 using MyFilmBevy.Services.Interfaces;
+using static Microsoft.AspNetCore.Razor.Language.TagHelperMetadata;
+using System.Diagnostics;
 
 namespace MyFilmBevy.Services
 {
@@ -41,22 +43,36 @@ namespace MyFilmBevy.Services
 
             try
             {
-                newMovie = new Movie()
-                {
-                    MovieId = movie.id,
-                    Title = movie.title,
-                    TagLine = movie.tagline,
-                    Overview = movie.overview,
-                    RunTime = movie.runtime,
-                    BackdroprData = await EncodeBackdropImageAsync(movie.backdrop_path),
-                    BackdropType = BuildImageType(movie.backdrop_path),
-                    PosterData = await EncodePosterImageAsync(movie.poster_path),
-                    PosterType = BuildImageType(movie.poster_path),
-                    Rating = GetRating(movie.release_dates),
-                    ReleaseDate = DateTime.Parse(movie.release_date),
-                    TrailerUrl = BuildTrailerPath(movie.videos),
-                    VoteAverage = movie.vote_average,
-                };
+                newMovie = new Movie();
+                newMovie.MovieId = movie.id;
+                newMovie.Title = movie.title;
+                newMovie.TagLine = movie.tagline;
+                newMovie.Overview = movie.overview;
+                newMovie.RunTime = movie.runtime;
+                newMovie.BackdroprData = await EncodeBackdropImageAsync(movie.backdrop_path);
+                newMovie.BackdropType = BuildImageType(movie.backdrop_path);
+                newMovie.PosterData = await EncodePosterImageAsync(movie.poster_path);
+                newMovie.PosterType = BuildImageType(movie.poster_path);
+                newMovie.Rating = GetRating(movie.release_dates);
+                newMovie.ReleaseDate = DateTime.Parse(movie.release_date);
+                newMovie.TrailerUrl = BuildTrailerPath(movie.videos);
+                newMovie.VoteAverage = movie.vote_average;
+
+                //{
+                //    MovieId = movie.id,
+                //    Title = movie.title,
+                //    TagLine = movie.tagline,
+                //    Overview = movie.overview,
+                //    RunTime = movie.runtime,
+                //    BackdroprData = await EncodeBackdropImageAsync(movie.backdrop_path),
+                //    BackdropType = BuildImageType(movie.backdrop_path),
+                //    PosterData = await EncodePosterImageAsync(movie.poster_path),
+                //    PosterType = BuildImageType(movie.poster_path),
+                //    Rating = GetRating(movie.release_dates),
+                //    ReleaseDate = DateTime.Parse(movie.release_date),
+                //    TrailerUrl = BuildTrailerPath(movie.videos),
+                //    VoteAverage = movie.vote_average,
+                //};
 
                 var castMembers = movie.credits.cast
                     .OrderByDescending(c => c.popularity)
@@ -128,7 +144,7 @@ namespace MyFilmBevy.Services
         private async Task<byte[]> EncodePosterImageAsync(string poster_path)
         {
             var posterPath = $"{_appSettings.TMDBSettings.BaseImagePath}/{_appSettings.MovieProSettings.DefaultPosterSize}/{poster_path}";
-            return await _imageService.EncodeImageUrlAsyc(posterPath);
+            return await _imageService.EncodeImageUrlAsync(posterPath);
         }
 
         private string BuildTrailerPath(Videos videos)
@@ -140,7 +156,7 @@ namespace MyFilmBevy.Services
         private async Task<byte[]> EncodeBackdropImageAsync(string backdrop_path)
         {
             var backdropPath = $"{_appSettings.TMDBSettings.BaseImagePath}/{_appSettings.MovieProSettings.DefaultBackdropSize}/{backdrop_path}";
-            return await _imageService.EncodeImageAsync(backdropPath);
+            return await _imageService.EncodeImageUrlAsync(backdropPath);
         }
 
         private string BuildImageType(string backdrop_path)

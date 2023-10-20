@@ -6,27 +6,250 @@
     ViewData["Title"] = "My Movie Bevy";
 }
 
-
-<div class="row">
-    @foreach(var movie in Model.Upcoming.results)
-    {
-        if(movie is not null)
-        {
-            <div class="col-sm-3 mb-2">
-                <div class="card" style="width: 18rem;">
-                    <img src="@movie.poster_path" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">@movie.title</h5>
-                        <p class="card-text">@movie.overview</p>
-                        <button class="btn btn-lg btn-warning">Details</button>
-                    </div>
-                </div>
-            </div>
-        }
-        else
-        {
-            // Figure out what to do if nothing is returned, out of error usually
-        }
+<style>
+    .clampOverview {
+        /* 
+        This will help align the card section by
+        limiting the overview to 4 wrapped lines
+        */
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
-</div>
 
+    .clampTitle {
+        /* 
+        This will help align the card sections by
+        limiting the Title to two lines max.
+        */
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    h5-card-tittle {
+        /*
+        This will help align the card sections by
+        making the title a consistent size
+        */
+        height: 2.5em;
+    }
+</style>
+
+<section class="px-4">
+    <div class="row">
+        <span class="btn btn-lg btn-black btn-warning fw-bolder border-dark">UPCOMING</span>
+    </div>
+    <div class="row">
+        <div class="carousel slide" data-bs-ride="carousel">
+            @*     <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4"></button>
+            </div>
+            *@
+            <div class="carousel-inner">
+                @{
+                    var classText = "active";
+                    for (var slide = 0; slide <= 3; slide++)
+                    {
+                        <div class="carousel-item @classText">
+                            <div class="row">
+                                @foreach (var movie in Model.Upcoming.results.Skip(slide * 4).Take(4))
+                                {
+                                    if (movie is not null)
+                                    {
+                                        <div class="col-sm-3 mb-2">
+                                            <div class="card" style="width: 18rem;">
+                                                <img src="@movie.poster_path" class="card-img-top" alt="...">
+                                                <div class="card-body">
+                                                    <h5 class="card-title clamTitle">@movie.title</h5>
+                                                    <p class="card-text clampOverview">@movie.overview</p>
+                                                    <a asp-action="Details" asp-controller="Movies" asp-route-id="@movie.id" class="btn btn-lg btn-block btn-warning fw-bold">Details</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        classText = "";
+                    }
+                }
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<section class="px-4">
+    <div class="row">
+        <span class="btn btn-lg btn-black btn-warning fw-bolder border-dark">NOW PLAYING</span>
+    </div>
+    <div class="row">
+        <div class="carousel slide" data-bs-ride="carousel">
+            @*     <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4"></button>
+            </div>
+            *@
+            <div class="carousel-inner">
+                @{
+                    classText = "active";
+                    for (var slide = 0; slide <= 3; slide++)
+                    {
+                        <div class="carousel-item @classText">
+                            <div class="row">
+                                @foreach (var movie in Model.NowPlaying.results.Skip(slide * 4).Take(4))
+                                {
+                                    if (movie is not null)
+                                    {
+                                        <div class="col-sm-3 mb-2">
+                                            <div class="card" style="width: 18rem;">
+                                                <img src="@movie.poster_path" class="card-img-top" alt="...">
+                                                <div class="card-body">
+                                                    <h5 class="card-title clamTitle">@movie.title</h5>
+                                                    <p class="card-text clampOverview">@movie.overview</p>
+                                                    <a asp-action="Details" asp-controller="Movies" asp-route-id="@movie.id" class="btn btn-lg btn-block btn-warning fw-bold">Details</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        classText = "";
+                    }
+                }
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<section class="px-4">
+    <div class="row">
+        <span class="btn btn-lg btn-black btn-warning fw-bolder border-dark">POPULAR</span>
+    </div>
+    <div class="row">
+        <div class="carousel slide" data-bs-ride="carousel">
+            @*     <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4"></button>
+            </div>
+            *@
+            <div class="carousel-inner">
+                @{
+                    classText = "active";
+                    for (var slide = 0; slide <= 3; slide++)
+                    {
+                        <div class="carousel-item @classText">
+                            <div class="row">
+                                @foreach (var movie in Model.Popular.results.Skip(slide * 4).Take(4))
+                                {
+                                    if (movie is not null)
+                                    {
+                                        <div class="col-sm-3 mb-2">
+                                            <div class="card" style="width: 18rem;">
+                                                <img src="@movie.poster_path" class="card-img-top" alt="...">
+                                                <div class="card-body">
+                                                    <h5 class="card-title clamTitle">@movie.title</h5>
+                                                    <p class="card-text clampOverview">@movie.overview</p>
+                                                    <a asp-action="Details" asp-controller="Movies" asp-route-id="@movie.id" class="btn btn-lg btn-block btn-warning fw-bold">Details</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        classText = "";
+                    }
+                }
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<section class="px-4">
+    <div class="row">
+        <span class="btn btn-lg btn-black btn-warning fw-bolder border-dark">TOP RATED</span>
+    </div>
+    <div class="row">
+        <div class="carousel slide" data-bs-ride="carousel">
+            @*     <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4"></button>
+            </div>
+            *@
+            <div class="carousel-inner">
+                @{
+                    classText = "active";
+                    for (var slide = 0; slide <= 3; slide++)
+                    {
+                        <div class="carousel-item @classText">
+                            <div class="row">
+                                @foreach (var movie in Model.TopRated.results.Skip(slide * 4).Take(4))
+                                {
+                                    if (movie is not null)
+                                    {
+                                        <div class="col-sm-3 mb-2">
+                                            <div class="card" style="width: 18rem;">
+                                                <img src="@movie.poster_path" class="card-img-top" alt="...">
+                                                <div class="card-body">
+                                                    <h5 class="card-title clamTitle">@movie.title</h5>
+                                                    <p class="card-text clampOverview">@movie.overview</p>
+                                                    <a asp-action="Details" asp-controller="Movies" asp-route-id="@movie.id" class="btn btn-lg btn-block btn-warning fw-bold">Details</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        classText = "";
+                    }
+                }
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+</section>

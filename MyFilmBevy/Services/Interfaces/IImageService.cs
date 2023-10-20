@@ -4,7 +4,7 @@
     {
         Task<byte[]?> EncodeImageAsync(IFormFile file);
         Task<byte[]?> EncodeImageAsync(string fileName);
-        Task<byte[]?> EncodeImageUrlAsyc(string fileName);
+        Task<byte[]?> EncodeImageUrlAsync(string fileName);
 
         string? DecodeImage(byte[] data, string type);
         string? ImageType(IFormFile file);

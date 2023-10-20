@@ -33,7 +33,7 @@ namespace MyFilmBevy.Services
             return await File.ReadAllBytesAsync(file);
         }
 
-        public async Task<byte[]?> EncodeImageUrlAsyc(string imageUrl)
+        public async Task<byte[]?> EncodeImageUrlAsync(string imageUrl)
         {
             var client = _httpClientFactory.CreateClient();
             var response = await client.GetAsync(imageUrl);
