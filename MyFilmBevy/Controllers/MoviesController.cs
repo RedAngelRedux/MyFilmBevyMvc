@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MyFilmBevy.Data;
@@ -93,10 +95,156 @@ namespace MyFilmBevy.Controllers
             return View();
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Library()
         {
             return View(await _context.Movies.ToListAsync());
         }
+
+        // GET: Temp/Create
+        public IActionResult Create()
+        {
+            // Display list of all existing collectins
+            ViewData["CollectionId"] = new SelectList(_context.Collection, "Id", "Name");
+
+            return View();
+        }
+
+        // POST: Temp/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,MovieId,Title,TagLine,Overview,RunTime,ReleaseDate,Rating,VoteAverage,PosterData,PosterType,BackdroprData,BackdropType,TrailerUrl")] Movie movie, int collectionId)
+        {
+            if (ModelState.IsValid)
+            {
+                if(movie.PosterFile is not null)
+                {
+                    movie.PosterType = movie.PosterFile.ContentType;
+                    movie.PosterData = await _imageService.EncodeImageAsync(movie.PosterFile);
+                }
+
+                if(movie.BackdroprFile is not null)
+                {
+                    movie.BackdropType = movie.BackdroprFile.ContentType;
+                    movie.BackdroprData = await _imageService.EncodeImageAsync(movie.BackdroprFile);
+                }
+                _context.Add(movie);
+                await _context.SaveChangesAsync();
+
+                await AddToMovieCollection(movie.Id, collectionId);
+
+                return RedirectToAction("Index", "MovieCollections");
+            }
+            return View(movie);
+        }
+
+        // GET: Temp/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null || _context.Movies == null)
+            {
+                return NotFound();
+            }
+
+            var movie = await _context.Movies.FindAsync(id);
+            if (movie == null)
+            {
+                return NotFound();
+            }
+            return View(movie);
+        }
+
+        // POST: Temp/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,MovieId,Title,TagLine,Overview,RunTime,ReleaseDate,Rating,VoteAverage,PosterData,PosterType,BackdroprData,BackdropType,TrailerUrl")] Movie movie)
+        {
+            if (id != movie.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (movie.PosterFile is not null)
+                    {
+                        movie.PosterType = movie.PosterFile.ContentType;
+                        movie.PosterData = await _imageService.EncodeImageAsync(movie.PosterFile);
+                    }
+
+                    if (movie.BackdroprFile is not null)
+                    {
+                        movie.BackdropType = movie.BackdroprFile.ContentType;
+                        movie.BackdroprData = await _imageService.EncodeImageAsync(movie.BackdroprFile);
+                    }
+
+                    _context.Update(movie);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!MovieExists(movie.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Details","Movies",new { id = movie.Id, local = true});
+            }
+            return View(movie);
+        }
+
+        // GET: Temp/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null || _context.Movies == null)
+            {
+                return NotFound();
+            }
+
+            var movie = await _context.Movies
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (movie == null)
+            {
+                return NotFound();
+            }
+
+            return View(movie);
+        }
+
+        // POST: Temp/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            if (_context.Movies == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.Movies'  is null.");
+            }
+            var movie = await _context.Movies.FindAsync(id);
+            if (movie != null)
+            {
+                _context.Movies.Remove(movie);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Library","Movies");
+        }
+
+        private bool MovieExists(int id)
+        {
+            return (_context.Movies?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
 
         private async Task AddToMovieCollection(int movieId, string collectionName)
         {
