@@ -2,9 +2,9 @@
 {
     public enum MovieCategory
     {
-        NOW_PLAYING,
-        POPULAR,
-        TOP_RATED,
-        UPCOMING
+        now_playing,
+        popular,
+        top_rated,
+        upcoming
     }
 }

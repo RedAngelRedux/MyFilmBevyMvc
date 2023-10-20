@@ -6,6 +6,8 @@ using MyFilmBevy.Models;
 using MyFilmBevy.Models.View;
 using MyFilmBevy.Services.Interfaces;
 using System.Diagnostics;
+using System.Security.Policy;
+using static System.Net.WebRequestMethods;
 
 namespace MyFilmBevy.Controllers
 {
@@ -25,19 +27,13 @@ namespace MyFilmBevy.Controllers
         public async Task<IActionResult> Index()
         {
             const int count = 16;
-            var data = new LandingPageVM()
-            {
-                CustomCollectinos = await _context.Collection
-                                            .Include(c => c.MovieCollections)
-                                            .ThenInclude(mc => mc.Movie)
-                                            .ToListAsync(),
-                NowPlaying = await _tmdbMovieService.SearchMoviesAsync(MovieCategory.NOW_PLAYING,count),
-                Popular = await _tmdbMovieService.SearchMoviesAsync(MovieCategory.POPULAR, count),
-                TopRated = await _tmdbMovieService.SearchMoviesAsync(MovieCategory.TOP_RATED, count),
-                Upcoming = await _tmdbMovieService.SearchMoviesAsync(MovieCategory.UPCOMING, count)
 
-            };
-
+            var data = new LandingPageVM();
+            data.CustomCollectinos = await _context.Collection.Include(c => c.MovieCollections).ThenInclude(mc => mc.Movie).ToListAsync();
+            data.NowPlaying = await _tmdbMovieService.SearchMoviesAsync(MovieCategory.now_playing, count);
+            data.Popular = await _tmdbMovieService.SearchMoviesAsync(MovieCategory.popular, count);
+            data.TopRated = await _tmdbMovieService.SearchMoviesAsync(MovieCategory.top_rated, count);
+            data.Upcoming = await _tmdbMovieService.SearchMoviesAsync(MovieCategory.upcoming, count);
 
             return View(data);
         }
