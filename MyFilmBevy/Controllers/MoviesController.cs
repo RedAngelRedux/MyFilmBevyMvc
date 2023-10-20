@@ -93,6 +93,11 @@ namespace MyFilmBevy.Controllers
             return View();
         }
 
+        public async Task<IActionResult> Library()
+        {
+            return View(await _context.Movies.ToListAsync());
+        }
+
         private async Task AddToMovieCollection(int movieId, string collectionName)
         {
             var collection = await _context.Collection.FirstOrDefaultAsync(c => c.Name == collectionName);
