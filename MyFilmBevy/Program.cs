@@ -24,11 +24,23 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-// Custom Services Go Here
+// // Custom Services Go Here
+
+// The AppSettigs Service
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+
+// The Seed Service
 builder.Services.AddTransient<SeedService>();
+
+// Utility Services
+builder.Services.AddSingleton<IImageService,BasicImageService>();
+
+// The Remove Movie Serivce
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IRemoteMovieService,TMDBMovieService>();
+
+// The Mapping Services
+builder.Services.AddScoped<IDataMappingService,TMDBMappingService>();
 
 var app = builder.Build();
 
