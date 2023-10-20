@@ -245,7 +245,31 @@ namespace MyFilmBevy.Controllers
             return (_context.Movies?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
+        public async Task<IActionResult> Details(int? id, bool local = false)
+        {
+            if (id is null) return NotFound();
 
+            Movie? movie = new();
+
+            if(local)
+            {
+                movie = await _context.Movies
+                                .Include(m => m.Cast)
+                                .Include(m => m.Crew)
+                                .FirstOrDefaultAsync(m => m.Id == id);
+
+            }
+            else
+            {
+                var movieDetail = await _tmdbMovieService.GetMovieDetailAsync((int)id);
+                movie = await _tmdbMappingService.MapMovieDetailAsync(movieDetail);
+            }
+
+            if(movie is null) return NotFound();
+
+            ViewData["local"] = local;
+            return View(movie);
+        }
         private async Task AddToMovieCollection(int movieId, string collectionName)
         {
             var collection = await _context.Collection.FirstOrDefaultAsync(c => c.Name == collectionName);
