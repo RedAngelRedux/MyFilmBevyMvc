@@ -85,7 +85,8 @@ namespace MyFilmBevy.Services
                 {
                     newMovie.Cast.Add(new MovieCast()
                     {
-                        CastId = member.id,
+                        Id = member.id,
+                        CastId = member.cast_id,
                         Department = member.known_for_department,
                         Name = member.name,
                         Character = member.character,

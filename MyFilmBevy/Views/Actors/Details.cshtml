@@ -2,3 +2,30 @@
 
 @model ActorDetail
 
+<div class="d-flex">
+    <div class="flex-shrink-0">
+        <img src="@Model.profile_path" alt="...">
+    </div>
+    <div class="flex-grow-1 ms-3">
+        <table class="d-flex table table-hover">
+            <tbody>
+                <tr>
+                    <td>Name:</td>
+                    <td>@Model.name</td>
+                </tr>
+                <tr>
+                    <td>Biography:</td>
+                    <td>@Model.biography</td>
+                </tr>
+                <tr>
+                    <td>Birthday:</td>
+                    <td>@Model.birthday</td>
+                </tr>
+                <tr>
+                    <td>Birth Place:</td>
+                    <td>@Model.place_of_birth</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>v>

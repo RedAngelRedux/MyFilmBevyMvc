@@ -15,7 +15,7 @@ namespace MyFilmBevy.Controllers
             _tmdbMovieService = tmdbMovieService;
         }
 
-        public async Task<IActionResult> Detail(int id)
+        public async Task<IActionResult> Details(int id)
         {
             var actor = await _tmdbMovieService.GetActorDetailAsync(id);
             actor = _tmdbMappingService.MapActorDetail(actor);
