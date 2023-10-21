@@ -1,0 +1,89 @@
+﻿@using MyFilmBevy.Models.Database
+@using MyFilmBevy.Services.Interfaces
+
+@inject IImageService _imageService
+
+@model Movie
+
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <div class="row mb-2">
+            <img src="@_imageService.DecodeImage(Model.PosterData,Model.PosterType)" class="w-100" alt="..." />
+        </div>
+        <div class="row">
+            <button class="btn btn-lg btn-block btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#trailer">WATCH TRAILER</button>
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <div class="row">
+            <div class="col h5"<span class="fw-bolder mr-2">TITLE: </span>@Model.Title></div>
+        </div>
+        <div class="row">
+            <div class="col h5"><span class="fw-bolder mr-2">RELEASED: </span>@Model.ReleaseDate.ToString("MMM dd, yyyy")</div>
+        </div>
+        <div class="row">
+            <div class="col h5"><span class="fw-bolder mr-2">RATING: </span>@Model.Rating</div>
+        </div>
+        <div class="row">
+            <div class="col h5"><span class="fw-bolder mr-2">REVIEWS: </span>@Model.VoteAverage/10</div>
+        </div>
+        <div class="row">
+            <div class="col h5"><span class="fw-bolder mr-2">OVERVIEW:</span></div>
+        </div>
+        <div class="row">
+            <div class="col h5"><span class="h5 ml-4">@Model.Overview</span></div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col"><span>STARING: </span></div>
+</div>
+@foreach (var actor in Model.Cast.Take(5))
+{
+    <div class="row">
+        <div class="col">
+            <div class="card mb-3">
+                <div class="row no-gutters">
+                    <div class="col-md-2">
+                        <img src="@actor.ImageUrl" class="img-fluid" style="width: 10rem" alt="...">
+                    </div>
+                    <div class="col-md-10">
+                        <div class="card-body">
+                            <h5 class="card-title">Name: @actor.Name</h5>
+                            <p class="card-text">Character: @actor.Character</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@* Modal *@
+<div class="modal fade" id="trailer" tabindex="-1" role="dialog" aria-labelledby="trailer-label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">@Model.Title</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="ratio ratio-16x9">
+                    @{
+                        //I am isolating a piece of data in order to use it as my embed source
+                        var key = Model.TrailerUrl.Split("=").ToList();
+                        var source = $"https://www.youtube.com/embed/{key[1]}?autoplay=1&mute=1&enablejsapi=1";
+                    }
+                    <iframe src="@source" title="YouTube video player" frameborder="2" style="max-width: 100%; height: 100%;"
+                            allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen;
+                                    layout-animations 'none'; unoptimized-images 'none'; oversized-images 'none'; sync-script 'none'; sync-xhr 'none'; unsized-media 'none'; "></iframe>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
