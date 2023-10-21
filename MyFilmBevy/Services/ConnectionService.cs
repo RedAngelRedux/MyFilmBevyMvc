@@ -13,7 +13,7 @@ namespace MyFilmBevy.Services
 
         private static string BuildConnectionString(string databaseUrl)
         {
-            var databaseUri = new Uri(databaseUrl);
+            var databaseUri = new Uri("postgres://wxqtzjtswqutka:d03a1168534e58124f8fd021e5112f9124dfefa24bfe8ea8cd9646aea29d4ea6@ec2-54-234-13-16.compute-1.amazonaws.com:5432/dbflefti0ucs4n\r\n");
             var userInfo = databaseUri.UserInfo.Split(':');
             var builder = new NpgsqlConnectionStringBuilder
             {
